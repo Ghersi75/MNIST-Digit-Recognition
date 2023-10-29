@@ -30,9 +30,46 @@ train_dataloader = DataLoader(training_data, batch_size=batch_size)
 test_dataloader = DataLoader(test_data, batch_size=batch_size)
 
 # Print shape of data
-for X, y in test_dataloader:
-    # Not sure what N and C are here, but H and W are height and width
-    # N seems to be number of items since it matches with batch size, but C im not sure of
-    print(f"Shape of X [N, C, H, W]: {X.shape}")
-    print(f"Shape of y: {y.shape} {y.dtype}")
-    break
+# for X, y in test_dataloader:
+#     # Not sure what N and C are here, but H and W are height and width
+#     # N seems to be number of items since it matches with batch size, but C im not sure of
+#     print(f"Shape of X [N, C, H, W]: {X.shape}")
+#     print(f"Shape of y: {y.shape} {y.dtype}")
+#     break
+
+device = (
+    "cuda" 
+    if torch.cuda.is_available()
+    else 
+        "mps" if torch.backends.mps.is_available()
+    else 
+        "cpu"        
+)
+
+# Should be cuda
+print(f"Using device {device}")
+
+class NeuralNetwork(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.flatten = nn.Flatten()
+        self.linear_relu_stack = nn.Sequential(
+            # 28 * 28 inputs -> 512 ouputs
+            nn.Linear(28 * 28, 512),
+            # max(0, x) is most likely what this function uses
+            nn.ReLU(),
+            # 512 inputs -> 512 outputs
+            nn.Linear(512, 512),
+            # max(0, x) is most likely what this function uses
+            nn.ReLU(),
+            # 512 inputs -> 10 outputs
+            nn.Linear(512, 10)
+        )
+
+    def forward(self, x):
+        x = self.flatten(x)
+        logits = self.linear_relu_stack(x)
+        return logits
+    
+model = NeuralNetwork().to(device)
+print(model)
