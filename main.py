@@ -120,12 +120,13 @@ def test(dataloader, model, loss_fn):
     correct /= size
     print(f"Test error: \nAccuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f}\n")
 
-epochs = 10
-for t in range(epochs):
-    print(f"Epoch {t+1}\n---------------------------------")
-    train(train_dataloader, model, loss_fn, optimizer)
-    test(train_dataloader, model, loss_fn)
-print("Done")
+if __name__ == '__main__':
+    epochs = 10
+    for t in range(epochs):
+        print(f"Epoch {t+1}\n---------------------------------")
+        train(train_dataloader, model, loss_fn, optimizer)
+        test(train_dataloader, model, loss_fn)
+    print("Done")
 
-torch.save(model.state_dict(), "model.pth")
-print("Saved PyTorch Model State to model.pth")
+    torch.save(model.state_dict(), "model.pth")
+    print("Saved PyTorch Model State to model.pth")
