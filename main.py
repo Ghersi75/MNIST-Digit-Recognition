@@ -3,6 +3,7 @@ from torch import nn
 from torch.utils.data import DataLoader
 from torchvision import datasets
 from torchvision.transforms import ToTensor
+import os
 
 # If data is already downloaded, the code below wont download the data again
 
@@ -72,7 +73,10 @@ class NeuralNetwork(nn.Module):
         return logits
     
 model = NeuralNetwork().to(device)
-print(model)
+if os.path.exists("model.pth"):
+    model.load_state_dict(torch.load("model.pth"))
+    print("Loaded data from model.pth")
+# print(model)
 
 # Loss function for figuring out how far off the neural network is from the right guess ... I think???
 loss_fn = nn.CrossEntropyLoss()
@@ -113,5 +117,15 @@ def test(dataloader, model, loss_fn):
             test_loss += loss_fn(pred, y).item()
             correct += (pred.argmax(1) == y).type(torch.float).sum().item()
     test_loss /= num_batches
-    correct /= sum
+    correct /= size
     print(f"Test error: \nAccuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f}\n")
+
+epochs = 10
+for t in range(epochs):
+    print(f"Epoch {t+1}\n---------------------------------")
+    train(train_dataloader, model, loss_fn, optimizer)
+    test(train_dataloader, model, loss_fn)
+print("Done")
+
+torch.save(model.state_dict(), "model.pth")
+print("Saved PyTorch Model State to model.pth")
