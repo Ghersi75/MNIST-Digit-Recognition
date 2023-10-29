@@ -73,3 +73,9 @@ class NeuralNetwork(nn.Module):
     
 model = NeuralNetwork().to(device)
 print(model)
+
+# Loss function for figuring out how far off the neural network is from the right guess ... I think???
+loss_fn = nn.CrossEntropyLoss()
+# Function used to update the network over time to get better results. Maybe this is run when back propagating? No idea
+optimizer = torch.optim.SGD(model.parameters(), lr=1e-3)
+
